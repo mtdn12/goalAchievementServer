@@ -1,0 +1,30 @@
+{
+  "name": "goals_achievement",
+  "version": "0.0.1",
+  "description": "Server side for Goals Achievement project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mtdn12/goalAchievementServer.git"
+  },
+  "keywords": [
+    "Goals",
+    "Achievement"
+  ],
+  "author": "VMT_91",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mtdn12/goalAchievementServer/issues"
+  },
+  "homepage": "https://github.com/mtdn12/goalAchievementServer#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "mongoose": "^5.3.14",
+    "passport": "^0.4.0",
+    "validator": "^10.9.0"
+  }
+}
