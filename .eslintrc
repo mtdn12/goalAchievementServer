@@ -1,0 +1,27 @@
+{
+  "parser": "babel-eslint",
+  "extends": ["standard", "prettier"],
+  "plugins": ["babel", "import", "node", "promise", "prettier", "standard"],
+  "env": {
+      "browser": true,
+      "node": true
+  },
+  "rules": {
+      "prettier/prettier": [
+          "error",
+          {
+              "singleQuote": true,
+              "trailingComma": true,
+              "bracketSpacing": true,
+              "parser": "flow",
+              "semi": false
+          }
+      ],
+      "key-spacing": "off",
+      "max-len": [2, 120, 2],
+      "object-curly-spacing": [2, "always"],
+      "no-undef": 1,
+      "camelcase": "off",
+      "radix": "off"
+  }
+}
