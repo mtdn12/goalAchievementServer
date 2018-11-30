@@ -1,21 +1,36 @@
 const mongoose = require('mongoose')
 const express = require('express')
 const bodyParser = require('body-parser')
-const passport = require('passport')
 const keys = require('./config')
-const admin = require('./firebase')
+const cors = require('cors')
+
+// Route List
+const users = require('./routes/api/users')
+
+// Middlewares
+const authCheck = require('./middlewares/checkAuthen')
 
 // start express app
 const app = express()
+// Body parser middleware
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+app.use(authCheck)
+app.use(cors())
 
-console.log(admin.auth())
+// console.log(admin.auth())
+
+// User Routes
+app.use('/api/users', users)
 
 // DB config
-mongoose.connect(keys.mongoURI)
-  .then(() => console.log("MongoDb Connected"))
+mongoose
+  .connect(
+    keys.mongoURI,
+    { useNewUrlParser: true }
+  )
+  .then(() => console.log('MongoDb Connected'))
   .catch(err => console.log(err))
-
-
 
 let PORT = process.env.PORT || 5000
 

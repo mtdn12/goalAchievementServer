@@ -1,7 +1,7 @@
 {
-  "parser": "babel-eslint",
+  
   "extends": ["standard", "prettier"],
-  "plugins": ["babel", "import", "node", "promise", "prettier", "standard"],
+  "plugins": ["import", "node", "promise", "prettier", "standard"],
   "env": {
       "browser": true,
       "node": true
