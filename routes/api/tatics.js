@@ -4,6 +4,7 @@ const moment = require('moment')
 
 const Tatic = require('../../Models/Tatic')
 const Strategy = require('../../Models/Strategy')
+const Goal = require('../../Models/Goal')
 
 // Import middle wares
 const authCheck = require('../../middlewares/checkAuthen')
@@ -35,6 +36,17 @@ router.post('/', authCheck, async (req, res) => {
         error: 'Could not found any strategy match that strategy Id',
       })
     }
+    const goal = await Goal.findOne({
+      _id: req.body.goalId,
+      user: req.user._id,
+    })
+    if (!goal) {
+      return res.json({
+        result: 'fail',
+        status: 404,
+        error: 'Could not found any Goal match that goal id',
+      })
+    }
     // Create new tatic object
     const totalCount =
       Math.ceil(
@@ -48,6 +60,7 @@ router.post('/', authCheck, async (req, res) => {
       description: req.body.description,
       timeEnd: req.body.timeEnd,
       timeInWeek: req.body.timeInWeek,
+      goal: goal._id,
     })
     const saveTatic = await newTatic.save()
     if (!newTatic) {

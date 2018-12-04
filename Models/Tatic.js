@@ -10,6 +10,11 @@ const taticSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'strategies',
   },
+  goal: {
+    type: Schema.Types.ObjectId,
+    ref: 'goals',
+    required: true,
+  },
   name: {
     type: String,
     required: true,

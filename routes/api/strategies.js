@@ -7,6 +7,8 @@ const Objective = require('../../Models/Objective')
 
 const Strategy = require('../../Models/Strategy')
 
+const Goal = require('../../Models/Goal')
+
 // Import validation
 const strategyInputValidation = require('../../validation/StrategyInput')
 
@@ -34,6 +36,17 @@ router.post('/', authCheck, async (req, res) => {
         error: 'Could not find any objective match that objective Id',
       })
     }
+    const goal = await Goal.findOne({
+      _id: req.body.goalId,
+      user: req.user._id,
+    })
+    if (!goal) {
+      return res.json({
+        result: 'fail',
+        status: 404,
+        error: 'Could not found any Goal match that goal id',
+      })
+    }
     // Create new Strategy
     const newStrategy = new Strategy({
       name: req.body.name,
@@ -41,6 +54,7 @@ router.post('/', authCheck, async (req, res) => {
       timeEnd: req.body.timeEnd,
       objective: objective._id,
       user: req.user._id,
+      goal: goal._id,
     })
     const saveStrategy = await newStrategy.save()
     if (!saveStrategy) {

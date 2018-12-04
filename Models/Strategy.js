@@ -12,6 +12,11 @@ const strategySchema = new Schema({
     ref: 'objectives',
     required: true,
   },
+  goal: {
+    type: Schema.Types.ObjectId,
+    ref: 'goals',
+    required: true,
+  },
   name: {
     type: String,
     trim: true,
@@ -23,7 +28,7 @@ const strategySchema = new Schema({
   },
   tatics: [
     {
-      strategy: {
+      tatic: {
         type: Schema.Types.ObjectId,
         ref: 'tatics',
       },

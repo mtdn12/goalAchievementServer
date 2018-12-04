@@ -17,7 +17,7 @@ const objectiveSchema = new Schema({
   },
   strategies: [
     {
-      tatic: {
+      strategy: {
         type: Schema.Types.ObjectId,
         ref: 'strategies',
       },

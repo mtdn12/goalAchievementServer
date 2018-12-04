@@ -7,6 +7,7 @@ const inputTaticValidation = data => {
       .greater('now')
       .required(),
     strategyId: Joi.string().required(),
+    goalId: Joi.string().required(),
   })
   const result = Joi.validate(data, Shape)
   return result
