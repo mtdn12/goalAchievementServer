@@ -9,8 +9,6 @@ const Tatic = require('../../Models/Tatic')
 const goalsInputValidation = require('../../validation/goalInput')
 // Middlewares
 const authCheck = require('../../middlewares/checkAuthen')
-// Helper functions
-const getChildren = require('../../helpers/getChildren')
 
 // Post route
 // Create new post
@@ -215,6 +213,79 @@ router.get('/:id', authCheck, async (req, res) => {
       result: 'fail',
       status: 400,
       error: 'Could not get goal detail',
+    })
+  }
+})
+
+// Delete Goal
+
+router.delete('/:id', authCheck, async (req, res) => {
+  try {
+    // Find that goal
+    const goal = await Goal.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    })
+    if (!goal) {
+      return res.json({
+        result: 'fail',
+        status: 404,
+        error: 'Could not found that goal ',
+      })
+    }
+    // Delete all tatics match with that goal
+    const isRemoveTatic = await Tatic.deleteMany({
+      goal: req.params.id,
+    })
+    if (!isRemoveTatic) {
+      return res.json({
+        result: 'fail',
+        status: 400,
+        error: 'Could not delete tatics match with that goals',
+      })
+    }
+    // Delete all strategies match with that goal
+    const isRemoveStrategy = await Strategy.deleteMany({
+      goal: req.params.id,
+    })
+    if (!isRemoveStrategy) {
+      return res.json({
+        result: 'fail',
+        status: 400,
+        error: 'Could not delete strategies match with that goals',
+      })
+    }
+    // Delete all objectives match with that goal
+    const isRemoveObjective = await Objective.deleteMany({
+      goal: req.params.id,
+    })
+    if (!isRemoveObjective) {
+      return res.json({
+        result: 'fail',
+        status: 400,
+        error: 'Could not delete Objectives match with that goals',
+      })
+    }
+    // Delete goal
+    const isRemoveGoal = goal.delete()
+    if (!isRemoveGoal) {
+      return res.json({
+        result: 'fail',
+        status: 400,
+        error: 'Could not delete goal',
+      })
+    }
+    // success
+    return res.json({
+      result: 'success',
+      status: 200,
+      message: 'Delete goal success',
+    })
+  } catch (error) {
+    return res.json({
+      result: 'fail',
+      status: 400,
+      error: 'Could not delete that goal',
     })
   }
 })
