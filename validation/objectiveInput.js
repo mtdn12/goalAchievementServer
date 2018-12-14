@@ -7,6 +7,9 @@ const ObjectiveValidation = data => {
       .greater('now')
       .required(),
     goalId: Joi.string().required(),
+    description: Joi.string()
+      .allow('')
+      .optional(),
   })
   const result = Joi.validate(data, Shape)
   return result

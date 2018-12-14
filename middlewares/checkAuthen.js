@@ -16,17 +16,18 @@ const checkAuthen = (req, res, next) => {
       if (user) {
         req.user = user
       }
-      // Revoke refresh token
-      await admin.auth().revokeRefreshTokens(decodedToken.uid)
-      const userRevoke = await admin.auth().getUser(decodedToken.uid)
-      const time =
-        (await new Date(userRevoke.tokensValidAfterTime).getTime()) / 1000
-      console.log('Tokens revoked at: ', time)
+      // // Revoke refresh token
+      // await admin.auth().revokeRefreshTokens(decodedToken.uid)
+      // const userRevoke = await admin.auth().getUser(decodedToken.uid)
+      // const time =
+      //   (await new Date(userRevoke.tokensValidAfterTime).getTime()) / 1000
+      // console.log('Tokens revoked at: ', time)
       next()
     })
     .catch(err => {
       return res.json({
         error: 'UnAuthorization',
+        result: 'fail'
       })
     })
 }

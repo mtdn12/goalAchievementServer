@@ -30,7 +30,6 @@ router.post('/', authCheck, async (req, res) => {
       _id: req.body.goalId,
       user: req.user._id,
     })
-    console.log(goal)
     if (!goal) {
       return res.json({
         result: 'fail',
@@ -86,7 +85,7 @@ router.post('/', authCheck, async (req, res) => {
 
 router.put('/:id', authCheck, async (req, res) => {
   try {
-    const { error, value } = objectiveEditValidation(req.data)
+    const { error, value } = objectiveEditValidation(req.body)
     if (error) {
       return res.json({
         result: 'fail',
@@ -103,9 +102,9 @@ router.put('/:id', authCheck, async (req, res) => {
         error: 'Could not found any objecitve match that id',
       })
     }
-    objective.name = req.name
-    objective.timeEnd = req.timeEnd
-    objective.description = req.description
+    objective.name = req.body.name
+    objective.timeEnd = req.body.timeEnd
+    objective.description = req.body.description
     const saveObjective = await objective.save()
     if (!saveObjective) {
       return res.json({
@@ -121,6 +120,7 @@ router.put('/:id', authCheck, async (req, res) => {
       message: 'Edit objective success',
     })
   } catch (error) {
+    console.log(error)
     return res.json({
       result: 'fail',
       status: 400,
@@ -137,36 +137,36 @@ router.get('/:id', authCheck, async (req, res) => {
     // Find that objective
     const objective = await Objective.findOne({
       _id: req.params.id,
-      user: req.user._id
+      user: req.user._id,
     }).lean()
-    if(!objective){
+    if (!objective) {
       return res.json({
         result: 'fail',
         status: 404,
-        error: "Could not found objective match with that id"
+        error: 'Could not found objective match with that id',
       })
     }
     // Find all strategies
     const strategies = await Strategy.find({
       goal: objective.goal,
-      objective: objective._id
+      objective: objective._id,
     }).lean()
-    if(!strategies){
+    if (!strategies) {
       return res.json({
         result: 'fail',
         status: 400,
-        error: "Could not found strategies match with that objective"
+        error: 'Could not found strategies match with that objective',
       })
     }
     // find all tatics
     const tatics = await Tatic.find({
-      goal: objective.goal
+      goal: objective.goal,
     }).lean()
-    if(!tatics){
+    if (!tatics) {
       return res.json({
         result: 'fail',
         status: 400,
-        error: "Could not found tatics match with that objective"
+        error: 'Could not found tatics match with that objective',
       })
     }
     // match tatics to objectives
@@ -178,13 +178,13 @@ router.get('/:id', authCheck, async (req, res) => {
       strategy.taticsDetail.push(tatic)
     })
     // Match strategies to objective
-    objective.strategies = strategies    
+    objective.strategies = strategies
     // return
     return res.json({
       result: 'success',
       status: 200,
       item: objective,
-      message: "Get objective detail success"
+      message: 'Get objective detail success',
     })
   } catch (error) {
     console.log(error)
@@ -198,18 +198,18 @@ router.get('/:id', authCheck, async (req, res) => {
 
 // Delete Objective and all strategies and tatics match with it
 // router detele
-router.delete('/:id', authCheck, async(req, res) => {
+router.delete('/:id', authCheck, async (req, res) => {
   try {
     // Find that objective
     const objective = await Objective.findOne({
       _id: req.params.id,
-      user: req.user._id
+      user: req.user._id,
     })
-    if(!objective){
+    if (!objective) {
       return res.json({
         result: 'fail',
         status: 404,
-        errror: "Could not found objective match that id"
+        errror: 'Could not found objective match that id',
       })
     }
     // get all strategies match with that objective
@@ -217,53 +217,52 @@ router.delete('/:id', authCheck, async(req, res) => {
       objective: objective._id,
     })
     // Loop throw that strategies and delete all tatics
-    if(strategies.length > 0){
+    if (strategies.length > 0) {
       strategies.map(async stra => {
         const isDeleteTatic = await Tatic.deleteMany({
-          strategy: stra._id
+          strategy: stra._id,
         })
-        if(!isDeleteTatic){
+        if (!isDeleteTatic) {
           return res.json({
             result: 'fail',
             status: 400,
-            error: "Could not delete tatics match with that objective"
+            error: 'Could not delete tatics match with that objective',
           })
         }
       })
     }
     // Delete all strategies match with those strategies
-     const isDeleteStrategy =  await Strategy.deleteMany({
-       objective: objective._id
-     })
-      if(!isDeleteStrategy){
-        return res.json({
-          result: 'fail',
-          status: 400,
-          error: "Could not delete strategies match with that objective"
-        })
-      }
-    // Delete objectives
-    const isDeleteObjective = await objective.delete()
-    if(!isDeleteObjective){
+    const isDeleteStrategy = await Strategy.deleteMany({
+      objective: objective._id,
+    })
+    if (!isDeleteStrategy) {
       return res.json({
         result: 'fail',
         status: 400,
-        error: "Could not delete objective"
+        error: 'Could not delete strategies match with that objective',
+      })
+    }
+    // Delete objectives
+    const isDeleteObjective = await objective.delete()
+    if (!isDeleteObjective) {
+      return res.json({
+        result: 'fail',
+        status: 400,
+        error: 'Could not delete objective',
       })
     }
     // Return success
     return res.json({
       result: 'success',
       status: 200,
-      message: "Delete objective success"
+      message: 'Delete objective success',
     })
-
   } catch (error) {
     console.log(error)
     return res.json({
       result: 'fail',
       status: 400,
-      error: "Could not delete that objective"
+      error: 'Could not delete that objective',
     })
   }
 })

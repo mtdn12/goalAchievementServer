@@ -8,6 +8,9 @@ const StrategyInputValidation = data => {
       .required(),
     objectiveId: Joi.string().required(),
     goalId: Joi.string().required(),
+    description: Joi.string()
+      .allow('')
+      .optional(),
   })
   const result = Joi.validate(data, Shape)
   return result

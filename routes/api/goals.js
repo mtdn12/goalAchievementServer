@@ -26,6 +26,7 @@ router.post('/', authCheck, async (req, res) => {
       user: req.user._id,
       name: req.body.name,
       timeEnd: req.body.timeEnd,
+      description: req.body.description,
     })
     const goal = await newGoal.save()
     if (!goal) {
@@ -106,7 +107,7 @@ router.get('/', authCheck, async (req, res) => {
   try {
     const goals = await Goal.find({
       user: req.user._id,
-    })
+    }).populate('user')
     if (!goals) {
       return res.json({
         result: 'fail',
@@ -136,7 +137,9 @@ router.get('/:id', authCheck, async (req, res) => {
     const goal = await Goal.findOne({
       _id: req.params.id,
       user: req.user._id,
-    }).lean()
+    })
+      .populate('user')
+      .lean()
     if (!goal) {
       return res.json({
         result: 'fail',

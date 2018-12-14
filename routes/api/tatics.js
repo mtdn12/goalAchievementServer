@@ -135,7 +135,6 @@ router.put('/:id', authCheck, async (req, res) => {
     tatic.timeEnd = req.body.timeEnd
     tatic.timeInWeek = req.body.timeInWeek
     tatic.totalCount = totalCount
-
     const saveTatic = await tatic.save()
     if (!saveTatic) {
       return res.json({

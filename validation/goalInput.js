@@ -6,6 +6,9 @@ const goalInputValidation = data => {
     timeEnd: Joi.date()
       .greater('now')
       .required(),
+    description: Joi.string()
+      .allow('')
+      .optional(),
   })
   return Joi.validate(data, schema)
 }

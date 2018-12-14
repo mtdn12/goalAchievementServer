@@ -6,6 +6,9 @@ const StrategyInputValidation = data => {
     timeEnd: Joi.date()
       .greater('now')
       .required(),
+    description: Joi.string()
+      .allow('')
+      .optional(),
   })
   const result = Joi.validate(data, Shape)
   return result
