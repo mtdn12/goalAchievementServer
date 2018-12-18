@@ -23,8 +23,9 @@ const HistorySchema = new Schema({
     required: true,
   },
   createdAt: {
-    default: Date.now,
+    type: Date,
+    default: Date.now(),
   },
 })
 
-module.exports = mongoose.model('historys', HistorySchema)
+module.exports = mongoose.model('histories', HistorySchema)

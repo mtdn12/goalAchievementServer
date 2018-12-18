@@ -15,7 +15,8 @@ const ActionSchema = new Schema({
     required: true,
   },
   createdAt: {
-    default: Date.now,
+    type: Date,
+    default: Date.now(),
   },
 })
 

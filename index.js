@@ -4,51 +4,71 @@ const bodyParser = require('body-parser')
 const keys = require('./config')
 const cors = require('cors')
 
-// Route List
-const users = require('./routes/api/users')
+// Import helper function
+const collectActions = require('./helpers/CollecActions')
 
-const goals = require('./routes/api/goals')
+function prepareServer() {
+  // Route List
+  const users = require('./routes/api/users')
 
-const objectives = require('./routes/api/objectives')
+  const goals = require('./routes/api/goals')
 
-const strategies = require('./routes/api/strategies')
+  const objectives = require('./routes/api/objectives')
 
-const tatics = require('./routes/api/tatics')
-// start express app
-const app = express()
-// Body parser middleware
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
-// app.use(authCheck)
-app.use(cors())
+  const strategies = require('./routes/api/strategies')
 
-// console.log(admin.auth())
+  const tatics = require('./routes/api/tatics')
 
-// User Routes
-app.use('/api/users', users)
+  const actions = require('./routes/api/actions')
 
-app.use('/api/goals', goals)
+  const histories = require('./routes/api/history')
 
-app.use('/api/objectives', objectives)
+  const dailyTasks = require('./routes/api/dailytask')
+  // start express app
+  const app = express()
+  // Body parser middleware
+  app.use(bodyParser.urlencoded({ extended: true }))
+  app.use(bodyParser.json())
+  // app.use(authCheck)
+  app.use(cors())
 
-app.use('/api/strategies', strategies)
+  // console.log(admin.auth())
 
-app.use('/api/tatics', tatics)
+  // User Routes
+  app.use('/api/users', users)
 
-// DB config
-mongoose
-  .connect(
-    keys.mongoURI,
-    { useNewUrlParser: true }
-  )
-  .then(() => console.log('MongoDb Connected'))
-  .catch(err => console.log(err))
+  app.use('/api/goals', goals)
 
-let PORT = process.env.PORT || 5000
+  app.use('/api/objectives', objectives)
 
-app.listen(PORT, () => {
-  console.log(`Listen on port ${PORT}`)
-})
+  app.use('/api/strategies', strategies)
+
+  app.use('/api/tatics', tatics)
+
+  app.use('/api/actions', actions)
+
+  app.use('/api/histories', histories)
+
+  app.use('/api/dailytaks', dailyTasks)
+  // DB config
+  mongoose
+    .connect(
+      keys.mongoURI,
+      { useNewUrlParser: true }
+    )
+    .then(() => console.log('MongoDb Connected'))
+    .catch(err => console.log(err))
+
+  let PORT = process.env.PORT || 5000
+
+  app.listen(PORT, () => {
+    console.log(`Listen on port ${PORT}`)
+  })
+}
+function init() {
+  prepareServer()
+  collectActions()
+}
 
 function fetchTodo() {
   // Move all Todo to history
@@ -58,3 +78,5 @@ function fetchTodo() {
   // Check in list tatic what action match with today
   // Add this to daily action today
 }
+
+init()

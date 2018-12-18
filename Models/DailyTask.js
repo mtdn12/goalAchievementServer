@@ -15,10 +15,12 @@ const DailyTaskSchema = new Schema({
     required: true,
   },
   isDone: {
+    type: Boolean,
     default: false,
   },
   createdAt: {
-    default: Date.now,
+    type: Date,
+    default: Date.now(),
   },
 })
 

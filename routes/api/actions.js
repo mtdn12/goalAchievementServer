@@ -168,3 +168,5 @@ router.delete('/:id', authCheck, async (req, res) => {
     })
   }
 })
+
+module.exports = router
