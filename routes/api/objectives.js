@@ -169,14 +169,20 @@ router.get('/:id', authCheck, async (req, res) => {
         error: 'Could not found tatics match with that objective',
       })
     }
-    // match tatics to objectives
-    tatics.forEach(tatic => {
-      let strategy = strategies.find(stra => {
-        return stra._id.toString() === tatic.strategy.toString()
+    // match tatics to strategies
+    if (tatics.length > 0) {
+      tatics.forEach(tatic => {
+        let strategy = strategies.find(stra => {
+          return stra._id.toString() === tatic.strategy.toString()
+        })
+        if (strategy) {
+          strategy.taticsDetail = strategy.taticsDetail
+            ? strategy.taticsDetail
+            : []
+          strategy.taticsDetail.push(tatic)
+        }
       })
-      strategy.taticsDetail = strategy.taticsDetail ? strategy.taticsDetail : []
-      strategy.taticsDetail.push(tatic)
-    })
+    }
     // Match strategies to objective
     objective.strategies = strategies
     // return

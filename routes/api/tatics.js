@@ -109,7 +109,7 @@ router.put('/:id', authCheck, async (req, res) => {
         error: error.details[0].message,
       })
     }
-    const tatic = await Tatic.find({
+    const tatic = await Tatic.findOne({
       _id: req.params.id,
       user: req.user._id,
     })

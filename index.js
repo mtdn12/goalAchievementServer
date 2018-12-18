@@ -49,3 +49,12 @@ let PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
   console.log(`Listen on port ${PORT}`)
 })
+
+function fetchTodo() {
+  // Move all Todo to history
+  // Clear all daily todo to add new one
+  // query all user in database
+  // loop through all user list and take all tatics match with that user
+  // Check in list tatic what action match with today
+  // Add this to daily action today
+}

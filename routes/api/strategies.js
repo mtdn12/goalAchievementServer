@@ -95,27 +95,27 @@ router.post('/', authCheck, async (req, res) => {
 
 // Edit strategies
 // Route: Put
-router.put('/:id', authCheck, async(req, res) => {
+router.put('/:id', authCheck, async (req, res) => {
   try {
     // Validate strategy input
-    const {error, value} = strategyEditValidation(req.body)
-    if(error){
+    const { error, value } = strategyEditValidation(req.body)
+    if (error) {
       return res.json({
         result: 'fail',
         status: 400,
-        error: error.details[0].message
+        error: error.details[0].message,
       })
     }
     // find and check that strategy
     const strategy = await Strategy.findOne({
       _id: req.params.id,
-      user: req.user._id
+      user: req.user._id,
     })
-    if(!strategy) {
+    if (!strategy) {
       return res.json({
         result: 'fail',
         status: 404,
-        error: "Could not found strategy match with that id"
+        error: 'Could not found strategy match with that id',
       })
     }
     // update strategy
@@ -124,53 +124,53 @@ router.put('/:id', authCheck, async(req, res) => {
     strategy.description = req.body.description
     // save and return
     const saveStrategy = await strategy.save()
-    if(!saveStrategy){
+    if (!saveStrategy) {
       return res.json({
         result: 'fail',
         status: 400,
-        error: "Could not save new strategy"
+        error: 'Could not save new strategy',
       })
     }
     return res.json({
       result: 'success',
       status: 200,
       item: saveStrategy,
-      message: "Edit strategy success"
+      message: 'Edit strategy success',
     })
   } catch (error) {
     return res.json({
       result: 'fail',
       status: 400,
-      error: "Could not delete that strategy"
+      error: 'Could not delete that strategy',
     })
   }
 })
 
 // Get strategy detail
 // Route: Get
-router.get('/:id', authCheck, async(req, res) => {
+router.get('/:id', authCheck, async (req, res) => {
   try {
     // Find that strategy and check
     const strategy = await Strategy.findOne({
       _id: req.params.id,
-      user: req.user._id
+      user: req.user._id,
     }).lean()
-    if(!strategy){
+    if (!strategy) {
       return res.json({
         result: 'fail',
         status: 404,
-        error: "Could not found any strategy match with that id"
+        error: 'Could not found any strategy match with that id',
       })
     }
     // find all tatics match with that strategies
-    const tatics = Tatic.find({
+    const tatics = await Tatic.find({
       strategy: req.params.id,
     }).lean()
-    if(!tatics){
+    if (!tatics) {
       return res.json({
         result: 'fail',
         status: 400,
-        error: 'Could not found tatics match with that strategy'
+        error: 'Could not found tatics match with that strategy',
       })
     }
     // match all tatics to strategy
@@ -180,62 +180,63 @@ router.get('/:id', authCheck, async(req, res) => {
       result: 'success',
       status: 200,
       item: strategy,
-      message: 'Get strategy success'
+      message: 'Get strategy success',
     })
-    
   } catch (error) {
+    console.log(error)
     return res.json({
       result: 'fail',
       status: 400,
-      error: "Could not get strategy detail"
+      error: 'Could not get strategy detail',
     })
   }
 })
 // Delete strategy ana all tatics match with that strategy
 // Route: delete
-router.delete('/:id', authCheck, async(req, res) => {
+router.delete('/:id', authCheck, async (req, res) => {
   try {
     // Find that stratery
-    const strategy = await Strategy.find({
+    const strategy = await Strategy.findOne({
       _id: req.params.id,
-      user: req.user._id
+      user: req.user._id,
     })
-    if(!strategy){
+    if (!strategy) {
       return res.json({
         result: 'fail',
         status: 404,
-        error: "Could not found any stratery match that id"
+        error: 'Could not found any stratery match that id',
       })
     }
     // delete all tatics match that strategy
     const isDeleteTatic = await Tatic.deleteMany({
-      strategy: req.params.id
+      strategy: req.params.id,
     })
-    if(!isDeleteTatic){
+    if (!isDeleteTatic) {
       return res.json({
         result: 'fail',
         status: 400,
-        error: "Could not delete tatics match with that strategy"
+        error: 'Could not delete tatics match with that strategy',
       })
     }
     const isDeleteStrategy = await strategy.delete()
-    if(!isDeleteStrategy){
+    if (!isDeleteStrategy) {
       return res.json({
         result: 'fail',
         status: 400,
-        error: "Could not delete stratery"
+        error: 'Could not delete stratery',
       })
     }
     return res.json({
       status: 200,
       result: 'success',
-      message: "delete strategy success"
+      message: 'delete strategy success',
     })
   } catch (error) {
+    console.log(error)
     return res.json({
       result: 'fail',
       status: 400,
-      error: "Could not delete strategy"
+      error: 'Could not delete strategy',
     })
   }
 })
