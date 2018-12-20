@@ -15,6 +15,10 @@ const taticSchema = new Schema({
     ref: 'goals',
     required: true,
   },
+  objective: {
+    type: Schema.Types.ObjectId,
+    ref: 'objectives',
+  },
   name: {
     type: String,
     required: true,

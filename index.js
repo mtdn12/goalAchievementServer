@@ -67,7 +67,7 @@ function prepareServer() {
 }
 function init() {
   prepareServer()
-  collectActions()
+  // collectActions()
 }
 
 function fetchTodo() {

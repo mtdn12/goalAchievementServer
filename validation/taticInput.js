@@ -7,7 +7,6 @@ const inputTaticValidation = data => {
       .greater('now')
       .required(),
     strategyId: Joi.string().required(),
-    goalId: Joi.string().required(),
     description: Joi.string()
       .allow('')
       .optional(),

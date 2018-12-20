@@ -3,7 +3,7 @@ const router = require('express').Router()
 
 const Tatic = require('../../Models/Tatic')
 const Strategy = require('../../Models/Strategy')
-const Goal = require('../../Models/Goal')
+const Action = require('../../Models/Action')
 
 // Import middle wares
 const authCheck = require('../../middlewares/checkAuthen')
@@ -36,17 +36,6 @@ router.post('/', authCheck, async (req, res) => {
         error: 'Could not found any strategy match that strategy Id',
       })
     }
-    const goal = await Goal.findOne({
-      _id: req.body.goalId,
-      user: req.user._id,
-    })
-    if (!goal) {
-      return res.json({
-        result: 'fail',
-        status: 404,
-        error: 'Could not found any Goal match that goal id',
-      })
-    }
     // Create new tatic object
     const totalCount =
       Math.ceil(
@@ -60,7 +49,8 @@ router.post('/', authCheck, async (req, res) => {
       description: req.body.description,
       timeEnd: req.body.timeEnd,
       timeInWeek: req.body.timeInWeek,
-      goal: goal._id,
+      goal: strategy.goal,
+      objective: strategy.objective,
     })
     const saveTatic = await newTatic.save()
     if (!newTatic) {
@@ -101,7 +91,7 @@ router.post('/', authCheck, async (req, res) => {
 router.put('/:id', authCheck, async (req, res) => {
   try {
     // validate tatic
-    const { error, value } = editTaticValidation(req.body)
+    const { error } = editTaticValidation(req.body)
     if (error) {
       return res.json({
         result: 'fail',
@@ -205,6 +195,19 @@ router.delete('/:id', authCheck, async (req, res) => {
         error: 'Could not found any tatic match that id',
       })
     }
+    // Delete all action match with that tatic
+    // delete all Actions match that strategy
+    const isDeleteAction = await Action.deleteMany({
+      tatic: req.params.id,
+    })
+    if (!isDeleteAction) {
+      return res.json({
+        result: 'fail',
+        status: 400,
+        error: 'Could not delete actions match with that tatic',
+      })
+    }
+    // delete tatic itself
     const isDeleteTatic = tatic.delete()
     if (!isDeleteTatic) {
       return res.json({

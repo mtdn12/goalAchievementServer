@@ -5,6 +5,7 @@ const Objective = require('../../Models/Objective')
 const Goal = require('../../Models/Goal')
 const Strategy = require('../../Models/Strategy')
 const Tatic = require('../../Models/Tatic')
+const Action = require('../../Models/Action')
 // Import middlewares
 const authCheck = require('../../middlewares/checkAuthen')
 
@@ -17,7 +18,7 @@ const objectiveEditValidation = require('../../validation/objectiveEdit')
 
 router.post('/', authCheck, async (req, res) => {
   try {
-    const { error, value } = objectiveInputValidation(req.body)
+    const { error } = objectiveInputValidation(req.body)
     if (error) {
       return res.json({
         result: 'fail',
@@ -85,7 +86,7 @@ router.post('/', authCheck, async (req, res) => {
 
 router.put('/:id', authCheck, async (req, res) => {
   try {
-    const { error, value } = objectiveEditValidation(req.body)
+    const { error } = objectiveEditValidation(req.body)
     if (error) {
       return res.json({
         result: 'fail',
@@ -218,23 +219,26 @@ router.delete('/:id', authCheck, async (req, res) => {
         errror: 'Could not found objective match that id',
       })
     }
-    // get all strategies match with that objective
-    const strategies = await Strategy.find({
+    // Delete all actions have this objective id
+    const isDeleteAction = await Action.deleteMany({
       objective: objective._id,
     })
-    // Loop throw that strategies and delete all tatics
-    if (strategies.length > 0) {
-      strategies.map(async stra => {
-        const isDeleteTatic = await Tatic.deleteMany({
-          strategy: stra._id,
-        })
-        if (!isDeleteTatic) {
-          return res.json({
-            result: 'fail',
-            status: 400,
-            error: 'Could not delete tatics match with that objective',
-          })
-        }
+    if (!isDeleteAction) {
+      return res.json({
+        result: 'fail',
+        status: 400,
+        error: 'Could not delete actions match with that objective',
+      })
+    }
+    // Delete all tatics have this objective id
+    const isDeleteTatic = await Tatic.deleteMany({
+      objective: objective._id,
+    })
+    if (!isDeleteTatic) {
+      return res.json({
+        result: 'fail',
+        status: 400,
+        error: 'Could not delete tatics match with that objective',
       })
     }
     // Delete all strategies match with those strategies

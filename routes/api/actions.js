@@ -22,10 +22,25 @@ router.post('/', authCheck, async (req, res) => {
         error: error.details[0].message,
       })
     }
+    // Check if have any tatic match that tatic id
+    const tatic = await Tatic.findOne({
+      user: req.user._id,
+      _id: req.body.taticId,
+    }).lean()
+    if (!tatic) {
+      return res.json({
+        result: 'fail',
+        status: 404,
+        error: 'Could not found any tatic match that taticId',
+      })
+    }
     const action = new Action({
       user: req.user._id,
       tatic: req.body.taticId,
       action: req.body.action,
+      goal: tatic.goal,
+      objective: tatic.objective,
+      strategy: tatic.strategy,
     })
     const saveAction = await action.save()
     if (!saveAction) {

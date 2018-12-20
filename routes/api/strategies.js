@@ -11,6 +11,8 @@ const Goal = require('../../Models/Goal')
 
 const Tatic = require('../../Models/Tatic')
 
+const Action = require('../../Models/Action')
+
 // Import validation
 const strategyInputValidation = require('../../validation/StrategyInput')
 const strategyEditValidation = require('../../validation/strategyEdit')
@@ -20,7 +22,7 @@ const strategyEditValidation = require('../../validation/strategyEdit')
 
 router.post('/', authCheck, async (req, res) => {
   try {
-    const { error, value } = strategyInputValidation(req.body)
+    const { error } = strategyInputValidation(req.body)
     if (error) {
       return res.json({
         result: 'fail',
@@ -39,17 +41,6 @@ router.post('/', authCheck, async (req, res) => {
         error: 'Could not find any objective match that objective Id',
       })
     }
-    const goal = await Goal.findOne({
-      _id: req.body.goalId,
-      user: req.user._id,
-    })
-    if (!goal) {
-      return res.json({
-        result: 'fail',
-        status: 404,
-        error: 'Could not found any Goal match that goal id',
-      })
-    }
     // Create new Strategy
     const newStrategy = new Strategy({
       name: req.body.name,
@@ -57,7 +48,7 @@ router.post('/', authCheck, async (req, res) => {
       timeEnd: req.body.timeEnd,
       objective: objective._id,
       user: req.user._id,
-      goal: goal._id,
+      goal: objective.goal,
     })
     const saveStrategy = await newStrategy.save()
     if (!saveStrategy) {
@@ -98,7 +89,7 @@ router.post('/', authCheck, async (req, res) => {
 router.put('/:id', authCheck, async (req, res) => {
   try {
     // Validate strategy input
-    const { error, value } = strategyEditValidation(req.body)
+    const { error } = strategyEditValidation(req.body)
     if (error) {
       return res.json({
         result: 'fail',
@@ -205,6 +196,17 @@ router.delete('/:id', authCheck, async (req, res) => {
         result: 'fail',
         status: 404,
         error: 'Could not found any stratery match that id',
+      })
+    }
+    // delete all Actions match that strategy
+    const isDeleteAction = await Action.deleteMany({
+      strategy: req.params.id,
+    })
+    if (!isDeleteAction) {
+      return res.json({
+        result: 'fail',
+        status: 400,
+        error: 'Could not delete actions match with that strategy',
       })
     }
     // delete all tatics match that strategy

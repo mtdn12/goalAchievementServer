@@ -7,7 +7,6 @@ const StrategyInputValidation = data => {
       .greater('now')
       .required(),
     objectiveId: Joi.string().required(),
-    goalId: Joi.string().required(),
     description: Joi.string()
       .allow('')
       .optional(),

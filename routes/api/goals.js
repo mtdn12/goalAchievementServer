@@ -5,6 +5,7 @@ const Goal = require('../../Models/Goal')
 const Objective = require('../../Models/Objective')
 const Strategy = require('../../Models/Strategy')
 const Tatic = require('../../Models/Tatic')
+const Action = require('../../Models/Action')
 // Validate goal input
 const goalsInputValidation = require('../../validation/goalInput')
 // Middlewares
@@ -14,7 +15,7 @@ const authCheck = require('../../middlewares/checkAuthen')
 // Create new post
 router.post('/', authCheck, async (req, res) => {
   try {
-    const { error, value } = goalsInputValidation(req.body)
+    const { error } = goalsInputValidation(req.body)
     if (error) {
       return res.json({
         result: 'fail',
@@ -234,6 +235,17 @@ router.delete('/:id', authCheck, async (req, res) => {
         result: 'fail',
         status: 404,
         error: 'Could not found that goal ',
+      })
+    }
+    // Delete all actions match with that goal
+    const isRemoveAction = await Action.deleteMany({
+      goal: req.params.id,
+    })
+    if (!isRemoveAction) {
+      return res.json({
+        result: 'fail',
+        status: 400,
+        error: 'Could not delete actions match with that goals',
       })
     }
     // Delete all tatics match with that goal

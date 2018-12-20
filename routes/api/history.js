@@ -6,10 +6,11 @@ const History = require('../../Models/History')
 const authCheck = require('../../middlewares/checkAuthen')
 
 // Get router
-router.get('/', authCheck, async (req, res) => {
+router.get('/:id', authCheck, async (req, res) => {
   try {
     const histories = await History.find({
       user: req.user._id,
+      tatic: req.params.id,
     })
     if (!histories) {
       return res.json({

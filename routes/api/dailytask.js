@@ -2,6 +2,7 @@ const router = require('express').Router()
 
 // Import model
 const DailyTask = require('../../Models/DailyTask')
+const Tatic = require('../../Models/Tatic')
 
 // Import middlewares
 const authCheck = require('../../middlewares/checkAuthen')
@@ -38,7 +39,46 @@ router.get('/', authCheck, async (req, res) => {
 router.post('check/:id', authCheck, async (req, res) => {
   try {
     // find task
+    const task = await DailyTask.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    })
+    if (!task) {
+      return res.json({
+        result: 'fail',
+        status: 404,
+        error: 'Could not found any task',
+      })
+    }
+    task.isDone = true
     // find tatic match that task and increase check done
+    const tatic = Tatic.findOne({
+      _id: task.tatic,
+      user: req.user._id,
+    })
+    if (!tatic) {
+      return res.json({
+        result: 'fail',
+        status: 404,
+        error: 'Could not found any tatic match that task',
+      })
+    }
+    tatic.completeAction = tatic.completeAction + 1
+    // Save tatic and task
+    const isSaveTask = await task.save()
+    const isSaveTatic = await tatic.save()
+    if (!isSaveTask || !isSaveTatic) {
+      return res.json({
+        result: 'fail',
+        status: 500,
+        error: 'Could not save your check',
+      })
+    }
+    return res.json({
+      result: 'success',
+      status: 200,
+      message: 'Check task success',
+    })
     // done
   } catch (error) {
     return res.json({
@@ -53,7 +93,46 @@ router.post('check/:id', authCheck, async (req, res) => {
 router.post('uncheck/:id', authCheck, async (req, res) => {
   try {
     // find task
-    // find tatic match that task and decrease check done
+    const task = await DailyTask.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    })
+    if (!task) {
+      return res.json({
+        result: 'fail',
+        status: 404,
+        error: 'Could not found any task',
+      })
+    }
+    task.isDone = false
+    // find tatic match that task and increase check done
+    const tatic = Tatic.findOne({
+      _id: task.tatic,
+      user: req.user._id,
+    })
+    if (!tatic) {
+      return res.json({
+        result: 'fail',
+        status: 404,
+        error: 'Could not found any tatic match that task',
+      })
+    }
+    tatic.completeAction = tatic.completeAction - 1
+    // Save tatic and task
+    const isSaveTask = await task.save()
+    const isSaveTatic = await tatic.save()
+    if (!isSaveTask || !isSaveTatic) {
+      return res.json({
+        result: 'fail',
+        status: 500,
+        error: 'Could not save your check',
+      })
+    }
+    return res.json({
+      result: 'success',
+      status: 200,
+      message: ' unCheck task success',
+    })
     // done
   } catch (error) {
     return res.json({
