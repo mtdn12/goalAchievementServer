@@ -22,6 +22,18 @@ router.post('/', authCheck, async (req, res) => {
         error: error.details[0].message,
       })
     }
+    // Check if have any action match with that tatic
+    const isExist = await Action.findOne({
+      user: req.user._id,
+      tatic: req.body.taticId,
+    })
+    if (isExist) {
+      return res.json({
+        result: 'fail',
+        status: 500,
+        error: 'Already exist action with that tatic',
+      })
+    }
     // Check if have any tatic match that tatic id
     const tatic = await Tatic.findOne({
       user: req.user._id,

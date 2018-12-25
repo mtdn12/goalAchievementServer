@@ -203,16 +203,19 @@ router.delete('/:id', authCheck, async (req, res) => {
     const isDeleteAction = await Action.deleteMany({
       tatic: req.params.id,
     })
-    const actions = await Action.find({
+    const action = await Action.findOne({
       tatic: req.params.id,
     })
-    const isDeleteDaily = await deleteActions(actions)
-    if (!isDeleteAction || !isDeleteDaily) {
-      return res.json({
-        result: 'fail',
-        status: 400,
-        error: 'Could not delete actions match with that tatic',
-      })
+    if (action) {
+      const isDeleteDaily = await deleteActions(action)
+
+      if (!isDeleteAction || !isDeleteDaily) {
+        return res.json({
+          result: 'fail',
+          status: 400,
+          error: 'Could not delete actions match with that tatic',
+        })
+      }
     }
     // delete tatic itself
     const isDeleteTatic = tatic.delete()

@@ -1,19 +1,16 @@
 // model
 const DailyTask = require('../Models/DailyTask')
 
-const deleteActions = async actions => {
+const deleteActions = async action => {
   try {
-    const promises = []
-    // Loopthrough all actions
-    for (let i = 0; i < actions.length; i++) {
-      const promise = DailyTask.deleteOne({
-        action: actions[i]._id,
-      }).exec()
-      promises.push(promise)
-    }
-    const isDelete = await Promise.all(promises)
+    console.log(action)
+    const isDelete = await DailyTask.deleteOne({
+      action: action._id,
+    }).exec()
+    console.log(isDelete)
     return isDelete
   } catch (error) {
+    console.log(error)
     return null
   }
 }
