@@ -12,7 +12,9 @@ const authCheck = require('../../middlewares/checkAuthen')
 // Objective input validation
 const objectiveInputValidation = require('../../validation/objectiveInput')
 const objectiveEditValidation = require('../../validation/objectiveEdit')
-
+// Helpers
+const deleteActions = require('../../helpers/DeleteActions')
+const reCount = require('../../helpers/updateCompleted')
 // Post-router
 // Create new objective
 
@@ -56,6 +58,7 @@ router.post('/', authCheck, async (req, res) => {
         error: 'Could not create new Objective',
       })
     }
+    reCount.recountGoal(saveObj)
     goal.objectives.push(saveObj._id)
     let newGoal = await goal.save()
     if (!newGoal) {
@@ -220,10 +223,15 @@ router.delete('/:id', authCheck, async (req, res) => {
       })
     }
     // Delete all actions have this objective id
+
     const isDeleteAction = await Action.deleteMany({
       objective: objective._id,
     })
-    if (!isDeleteAction) {
+    const actions = await Action.find({
+      objective: objective._id,
+    })
+    const isDeleteDaily = await deleteActions(actions)
+    if (!isDeleteAction || !isDeleteDaily) {
       return res.json({
         result: 'fail',
         status: 400,

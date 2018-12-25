@@ -11,6 +11,10 @@ const DailyTaskSchema = new Schema({
     ref: 'tatics',
   },
   action: {
+    type: Schema.Types.ObjectId,
+    ref: 'actions',
+  },
+  task: {
     type: String,
     required: true,
   },

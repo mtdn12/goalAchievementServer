@@ -6,11 +6,14 @@ const Tatic = require('../../Models/Tatic')
 
 // Import middlewares
 const authCheck = require('../../middlewares/checkAuthen')
+const timeout = require('connect-timeout')
+// Helper
+const reCount = require('../../helpers/updateCompleted')
 
 // Get list dailytask
 router.get('/', authCheck, async (req, res) => {
   try {
-    const dailyTasks = DailyTask.find({
+    const dailyTasks = await DailyTask.find({
       user: req.user._id,
     })
     if (!dailyTasks) {
@@ -27,6 +30,7 @@ router.get('/', authCheck, async (req, res) => {
       message: 'Get list daily task success',
     })
   } catch (error) {
+    console.log(error)
     return res.json({
       result: 'fail',
       status: 400,
@@ -36,7 +40,8 @@ router.get('/', authCheck, async (req, res) => {
 })
 
 // Check done an action
-router.post('check/:id', authCheck, async (req, res) => {
+router.post('/check/:id', authCheck, async (req, res) => {
+  req.setTimeout(0)
   try {
     // find task
     const task = await DailyTask.findOne({
@@ -52,7 +57,7 @@ router.post('check/:id', authCheck, async (req, res) => {
     }
     task.isDone = true
     // find tatic match that task and increase check done
-    const tatic = Tatic.findOne({
+    const tatic = await Tatic.findOne({
       _id: task.tatic,
       user: req.user._id,
     })
@@ -63,7 +68,7 @@ router.post('check/:id', authCheck, async (req, res) => {
         error: 'Could not found any tatic match that task',
       })
     }
-    tatic.completeAction = tatic.completeAction + 1
+    tatic.completedAction = tatic.completedAction + 1
     // Save tatic and task
     const isSaveTask = await task.save()
     const isSaveTatic = await tatic.save()
@@ -74,8 +79,10 @@ router.post('check/:id', authCheck, async (req, res) => {
         error: 'Could not save your check',
       })
     }
+    reCount.recountStrategy(isSaveTatic)
     return res.json({
       result: 'success',
+      item: isSaveTask,
       status: 200,
       message: 'Check task success',
     })
@@ -90,7 +97,8 @@ router.post('check/:id', authCheck, async (req, res) => {
 })
 
 // Uncheck an action
-router.post('uncheck/:id', authCheck, async (req, res) => {
+router.post('/uncheck/:id', authCheck, async (req, res) => {
+  req.setTimeout(0)
   try {
     // find task
     const task = await DailyTask.findOne({
@@ -106,7 +114,7 @@ router.post('uncheck/:id', authCheck, async (req, res) => {
     }
     task.isDone = false
     // find tatic match that task and increase check done
-    const tatic = Tatic.findOne({
+    const tatic = await Tatic.findOne({
       _id: task.tatic,
       user: req.user._id,
     })
@@ -117,7 +125,7 @@ router.post('uncheck/:id', authCheck, async (req, res) => {
         error: 'Could not found any tatic match that task',
       })
     }
-    tatic.completeAction = tatic.completeAction - 1
+    tatic.completedAction = tatic.completedAction - 1
     // Save tatic and task
     const isSaveTask = await task.save()
     const isSaveTatic = await tatic.save()
@@ -128,9 +136,11 @@ router.post('uncheck/:id', authCheck, async (req, res) => {
         error: 'Could not save your check',
       })
     }
+    reCount.recountStrategy(isSaveTatic)
     return res.json({
       result: 'success',
       status: 200,
+      item: isSaveTask,
       message: ' unCheck task success',
     })
     // done

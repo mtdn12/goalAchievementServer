@@ -19,7 +19,7 @@ const ActionSchema = new Schema({
     ref: 'objectives',
   },
   strategy: {
-    type: Schema.type.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'strategies',
   },
   action: {

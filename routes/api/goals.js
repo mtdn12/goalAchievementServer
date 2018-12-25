@@ -10,7 +10,8 @@ const Action = require('../../Models/Action')
 const goalsInputValidation = require('../../validation/goalInput')
 // Middlewares
 const authCheck = require('../../middlewares/checkAuthen')
-
+// Helpers function
+const deleteActions = require('../../helpers/DeleteActions')
 // Post route
 // Create new post
 router.post('/', authCheck, async (req, res) => {
@@ -238,10 +239,14 @@ router.delete('/:id', authCheck, async (req, res) => {
       })
     }
     // Delete all actions match with that goal
+    const actions = await Action.find({
+      goal: req.params.id,
+    })
     const isRemoveAction = await Action.deleteMany({
       goal: req.params.id,
     })
-    if (!isRemoveAction) {
+    const isDeleteDaily = await deleteActions(actions)
+    if (!isRemoveAction || !isDeleteDaily) {
       return res.json({
         result: 'fail',
         status: 400,

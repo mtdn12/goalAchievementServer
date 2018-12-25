@@ -11,7 +11,9 @@ const authCheck = require('../../middlewares/checkAuthen')
 // Import validations
 const inputTaticValidation = require('../../validation/taticInput')
 const editTaticValidation = require('../../validation/taticEdit')
-
+// import helpers
+const deleteActions = require('../../helpers/DeleteActions')
+const reCount = require('../../helpers/updateCompleted')
 // Post router
 // Create new tatic
 router.post('/', authCheck, async (req, res) => {
@@ -60,6 +62,7 @@ router.post('/', authCheck, async (req, res) => {
         error: 'Could not create new tatic',
       })
     }
+    reCount.recountStrategy(saveTatic)
     // add tatic to strategy
     strategy.tatics.push(saveTatic._id)
     const saveStrategy = strategy.save()
@@ -200,7 +203,11 @@ router.delete('/:id', authCheck, async (req, res) => {
     const isDeleteAction = await Action.deleteMany({
       tatic: req.params.id,
     })
-    if (!isDeleteAction) {
+    const actions = await Action.find({
+      tatic: req.params.id,
+    })
+    const isDeleteDaily = await deleteActions(actions)
+    if (!isDeleteAction || !isDeleteDaily) {
       return res.json({
         result: 'fail',
         status: 400,

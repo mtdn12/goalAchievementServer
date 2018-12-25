@@ -3,13 +3,13 @@ const router = require('express').Router()
 // import model
 const Action = require('../../Models/Action')
 const Tatic = require('../../Models/Tatic')
+const DailyTask = require('../../Models/DailyTask')
 
 // import middleware
 const authCheck = require('../../middlewares/checkAuthen')
 // import validations
 const actionInputValidation = require('../../validation/actionInput')
 const actionEditValidation = require('../../validation/actionEdit')
-
 // Post route
 // Create new actions
 router.post('/', authCheck, async (req, res) => {
@@ -91,6 +91,21 @@ router.put('/:id', authCheck, async (req, res) => {
     }
     // change
     action.action = req.body.action
+    // Save change to daily task too
+    const task = await DailyTask.findOne({
+      action: req.params.id,
+    })
+    if (task) {
+      task.task = req.body.action
+      const issaveDaily = await task.save()
+      if (!issaveDaily) {
+        return res.json({
+          result: 'fail',
+          status: 400,
+          error: 'Could not save to daily task',
+        })
+      }
+    }
     // Save action
     const saveAction = await action.save()
     if (!saveAction) {
@@ -108,6 +123,7 @@ router.put('/:id', authCheck, async (req, res) => {
       item: saveAction,
     })
   } catch (error) {
+    console.log(error)
     return res.json({
       result: 'fail',
       status: 400,
@@ -160,6 +176,17 @@ router.delete('/:id', authCheck, async (req, res) => {
         status: 404,
         result: 'fail',
         error: 'Could not found any action match that id',
+      })
+    }
+    // Delete all daily task match with that action
+    const isDeleteDaily = await DailyTask.deleteOne({
+      action: req.params.id,
+    })
+    if (!isDeleteDaily) {
+      return res.json({
+        status: 500,
+        result: 'fail',
+        error: 'Could not delete Daily task match with that action',
       })
     }
     const isDeleteAction = await action.delete()

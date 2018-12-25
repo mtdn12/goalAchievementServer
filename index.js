@@ -5,7 +5,7 @@ const keys = require('./config')
 const cors = require('cors')
 
 // Import helper function
-const collectActions = require('./helpers/CollecActions')
+const CollectActions = require('./helpers/CollectActions')
 
 function prepareServer() {
   // Route List
@@ -49,7 +49,7 @@ function prepareServer() {
 
   app.use('/api/histories', histories)
 
-  app.use('/api/dailytaks', dailyTasks)
+  app.use('/api/dailytasks', dailyTasks)
   // DB config
   mongoose
     .connect(
@@ -67,16 +67,9 @@ function prepareServer() {
 }
 function init() {
   prepareServer()
-  // collectActions()
-}
-
-function fetchTodo() {
-  // Move all Todo to history
-  // Clear all daily todo to add new one
-  // query all user in database
-  // loop through all user list and take all tatics match with that user
-  // Check in list tatic what action match with today
-  // Add this to daily action today
+  // setInterval(() => {
+  //   CollectActions()
+  // }, 1000 * 60)
 }
 
 init()

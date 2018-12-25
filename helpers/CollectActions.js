@@ -30,7 +30,7 @@ async function CollectActions() {
     const history = new History({
       user: task.user,
       tatic: task.tatic,
-      action: task.action,
+      action: task.task,
       timeAction: task.createdAt,
       isDone: task.isDone,
     })
@@ -43,7 +43,8 @@ async function CollectActions() {
       const dailyTask = new DailyTask({
         user: ac.user,
         tatic: ac.tatic,
-        action: ac.action,
+        action: ac._id,
+        task: ac.action,
       })
       dailyTask.save()
     })

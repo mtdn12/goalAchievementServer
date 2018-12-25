@@ -16,6 +16,9 @@ const Action = require('../../Models/Action')
 // Import validation
 const strategyInputValidation = require('../../validation/StrategyInput')
 const strategyEditValidation = require('../../validation/strategyEdit')
+// Helper
+const deleteActions = require('../../helpers/DeleteActions')
+const reCount = require('../../helpers/updateCompleted')
 
 // Post -Router
 // des : Create new strategy and relate it to objective
@@ -58,6 +61,7 @@ router.post('/', authCheck, async (req, res) => {
         error: 'Could not create new strategy',
       })
     }
+    reCount.recountObjective(saveStrategy)
     // Add strategy to objective
     objective.strategies.push(saveStrategy._id)
     const saveObjective = await objective.save()
@@ -202,7 +206,11 @@ router.delete('/:id', authCheck, async (req, res) => {
     const isDeleteAction = await Action.deleteMany({
       strategy: req.params.id,
     })
-    if (!isDeleteAction) {
+    const actions = await Action.find({
+      objective: strategy._id,
+    })
+    const isDeleteDaily = await deleteActions(actions)
+    if (!isDeleteAction || !isDeleteDaily) {
       return res.json({
         result: 'fail',
         status: 400,
