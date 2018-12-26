@@ -62,7 +62,7 @@ router.post('/', authCheck, async (req, res) => {
         error: 'Could not create new tatic',
       })
     }
-    reCount.recountStrategy(saveTatic)
+    reCount.recountStrategy(saveTatic.strategy)
     // add tatic to strategy
     strategy.tatics.push(saveTatic._id)
     const saveStrategy = strategy.save()
@@ -226,6 +226,7 @@ router.delete('/:id', authCheck, async (req, res) => {
         error: 'Could not delete tatic',
       })
     }
+    reCount.recountStrategy(tatic.strategy)
     return res.json({
       result: 'success',
       status: 200,

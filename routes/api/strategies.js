@@ -61,7 +61,7 @@ router.post('/', authCheck, async (req, res) => {
         error: 'Could not create new strategy',
       })
     }
-    reCount.recountObjective(saveStrategy)
+    reCount.recountObjective(saveStrategy.objective)
     // Add strategy to objective
     objective.strategies.push(saveStrategy._id)
     const saveObjective = await objective.save()
@@ -238,6 +238,7 @@ router.delete('/:id', authCheck, async (req, res) => {
         error: 'Could not delete stratery',
       })
     }
+    reCount.recountObjective(strategy.objective)
     return res.json({
       status: 200,
       result: 'success',

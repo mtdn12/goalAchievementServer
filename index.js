@@ -24,6 +24,8 @@ function prepareServer() {
   const histories = require('./routes/api/history')
 
   const dailyTasks = require('./routes/api/dailytask')
+
+  const books = require('./routes/api/books')
   // start express app
   const app = express()
   // Body parser middleware
@@ -50,6 +52,8 @@ function prepareServer() {
   app.use('/api/histories', histories)
 
   app.use('/api/dailytasks', dailyTasks)
+
+  app.use('/api/books', books)
   // DB config
   mongoose
     .connect(
@@ -67,6 +71,7 @@ function prepareServer() {
 }
 function init() {
   prepareServer()
+  CollectActions()
   // setInterval(() => {
   //   CollectActions()
   // }, 1000 * 60)

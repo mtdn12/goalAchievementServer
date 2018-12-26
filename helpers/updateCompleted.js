@@ -4,10 +4,10 @@ const Objective = require('../Models/Objective')
 const Strategy = require('../Models/Strategy')
 const Tatic = require('../Models/Tatic')
 
-const reCountWhenAddObjective = async obj => {
+const reCountWhenChangeObjective = async goalId => {
   try {
     // find goal match with that objective
-    const goal = await Goal.findById(obj.goal)
+    const goal = await Goal.findById(goalId)
     if (!goal) throw new Error()
     // Recount percent for that goal
     const objectives = await Objective.find({
@@ -27,10 +27,10 @@ const reCountWhenAddObjective = async obj => {
   }
 }
 
-const reCountWhenAddStrategy = async stra => {
+const reCountWhenChangeStrategy = async objId => {
   try {
     // Find objectives match with that strategy
-    const objective = await Objective.findById(stra.objective)
+    const objective = await Objective.findById(objId)
     if (!objective) throw new Error()
     // Recount percent for that objective
     const strategies = await Strategy.find({
@@ -45,7 +45,7 @@ const reCountWhenAddStrategy = async stra => {
     const isSaveObj = await objective.save()
     if (!isSaveObj) throw new Error()
     // recount percent for that goal
-    let reCountGoal = await reCountWhenAddObjective(isSaveObj)
+    let reCountGoal = await reCountWhenChangeObjective(isSaveObj.goal)
     if (!reCountGoal) throw new Error()
     return true
   } catch (error) {
@@ -53,9 +53,9 @@ const reCountWhenAddStrategy = async stra => {
   }
 }
 
-const reCountWhenChangeTatic = async tatic => {
+const reCountWhenChangeTatic = async straId => {
   try {
-    const strategy = await Strategy.findById(tatic.strategy)
+    const strategy = await Strategy.findById(straId)
     if (!strategy) throw new Error()
     // Recount percent for this strategy
     const tatics = await Tatic.find({
@@ -71,7 +71,7 @@ const reCountWhenChangeTatic = async tatic => {
     const isSaveStr = await strategy.save()
     if (!isSaveStr) throw new Error()
     // Recount objective
-    const reCountObjective = await reCountWhenAddStrategy(strategy)
+    const reCountObjective = await reCountWhenChangeStrategy(strategy.objective)
     if (!reCountObjective) throw new Error()
     return true
   } catch (error) {
@@ -80,7 +80,7 @@ const reCountWhenChangeTatic = async tatic => {
 }
 
 module.exports = {
-  recountGoal: reCountWhenAddObjective,
-  recountObjective: reCountWhenAddStrategy,
+  recountGoal: reCountWhenChangeObjective,
+  recountObjective: reCountWhenChangeStrategy,
   recountStrategy: reCountWhenChangeTatic,
 }

@@ -58,7 +58,7 @@ router.post('/', authCheck, async (req, res) => {
         error: 'Could not create new Objective',
       })
     }
-    reCount.recountGoal(saveObj)
+    reCount.recountGoal(saveObj.goal)
     goal.objectives.push(saveObj._id)
     let newGoal = await goal.save()
     if (!newGoal) {
@@ -272,6 +272,7 @@ router.delete('/:id', authCheck, async (req, res) => {
         error: 'Could not delete objective',
       })
     }
+    reCount.recountGoal(objective.goal)
     // Return success
     return res.json({
       result: 'success',

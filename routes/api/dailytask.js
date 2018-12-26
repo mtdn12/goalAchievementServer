@@ -79,7 +79,7 @@ router.post('/check/:id', authCheck, async (req, res) => {
         error: 'Could not save your check',
       })
     }
-    reCount.recountStrategy(isSaveTatic)
+    reCount.recountStrategy(isSaveTatic.strategy)
     return res.json({
       result: 'success',
       item: isSaveTask,
@@ -136,7 +136,7 @@ router.post('/uncheck/:id', authCheck, async (req, res) => {
         error: 'Could not save your check',
       })
     }
-    reCount.recountStrategy(isSaveTatic)
+    reCount.recountStrategy(isSaveTatic.strategy)
     return res.json({
       result: 'success',
       status: 200,
