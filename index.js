@@ -71,10 +71,9 @@ function prepareServer() {
 }
 function init() {
   prepareServer()
-  CollectActions()
-  // setInterval(() => {
-  //   CollectActions()
-  // }, 1000 * 60)
+  // CollectActions()
+  setInterval(() => {
+    CollectActions()
+  }, 1000 * 60 * 60 * 24)
 }
-
 init()

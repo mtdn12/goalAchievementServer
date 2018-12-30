@@ -8,6 +8,10 @@
     "start": "node index",
     "server": "nodemon index"
   },
+  "engines": {
+    "node": "8.12.0",
+    "yarn": "1.12.1"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mtdn12/goalAchievementServer.git"

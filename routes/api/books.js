@@ -25,9 +25,7 @@ router.post('/', authCheck, async (req, res) => {
       user: req.user._id,
       title: data.title,
       author: data.author,
-      review: data.review,
       status: data.status ? data.status : 'new',
-      rate: data.rate,
     })
     const isSaveBook = await book.save()
     if (!isSaveBook) {
@@ -69,6 +67,7 @@ router.get('/:id', authCheck, async (req, res) => {
         error: 'Could not find any book match with that id',
       })
     }
+    console.log(book)
     // return
     return res.json({
       result: 'success',
@@ -77,6 +76,7 @@ router.get('/:id', authCheck, async (req, res) => {
       message: 'Get book detail success',
     })
   } catch (error) {
+    console.log(error)
     return res.json({
       result: 'fail',
       status: 400,
@@ -95,7 +95,7 @@ router.get('/', authCheck, async (req, res) => {
       status: req.query.status,
     }).sort('-createdAt')
     // check
-    if (books) {
+    if (!books) {
       return res.json({
         result: 'fail',
         status: 404,
@@ -219,7 +219,7 @@ router.delete('/:id', authCheck, async (req, res) => {
 
 // Post router
 // Change status of a book
-router.put('/:id', authCheck, async (req, res) => {
+router.put('/status/:id', authCheck, async (req, res) => {
   try {
     const data = req.body
     if (!data.status) {
@@ -264,6 +264,57 @@ router.put('/:id', authCheck, async (req, res) => {
       result: 'fail',
       status: 400,
       error: 'Could not change status',
+    })
+  }
+})
+
+// Add review for book
+router.put('/review/:id', authCheck, async (req, res) => {
+  try {
+    const data = req.body
+    if (!data.rate || !data.review) {
+      return res.json({
+        status: 500,
+        error: 'Missing field',
+        result: 'fail',
+      })
+    }
+    // Find book match with that id
+    const book = await Book.findOne({
+      user: req.user._id,
+      _id: req.params.id,
+    })
+    // check if exist or not
+    if (!book) {
+      return res.json({
+        result: 'fail',
+        status: 404,
+        error: 'Could not found any book match with that id',
+      })
+    }
+    // change status of book
+    book.rate = data.rate
+    book.review = data.review
+    // save book
+    const isSaveBook = await book.save()
+    if (!isSaveBook) {
+      return res.json({
+        result: 'fail',
+        status: 500,
+        error: 'Could not save new status',
+      })
+    }
+    return res.json({
+      result: 'success',
+      status: 200,
+      message: 'Add review success',
+      item: isSaveBook,
+    })
+  } catch (error) {
+    return res.json({
+      result: 'fail',
+      status: 400,
+      error: 'Could not add review',
     })
   }
 })
