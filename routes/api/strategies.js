@@ -14,7 +14,7 @@ const Tatic = require('../../Models/Tatic')
 const Action = require('../../Models/Action')
 
 // Import validation
-const strategyInputValidation = require('../../validation/StrategyInput')
+const strategyInputValidation = require('../../validation/strategyInput')
 const strategyEditValidation = require('../../validation/strategyEdit')
 // Helper
 const deleteActions = require('../../helpers/DeleteActions')
