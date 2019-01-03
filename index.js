@@ -6,6 +6,7 @@ const cors = require('cors')
 
 // Import helper function
 const CollectActions = require('./helpers/CollectActions')
+const countRecallWord = require('./helpers/countRecallWord')
 
 function prepareServer() {
   // Route List
@@ -26,6 +27,8 @@ function prepareServer() {
   const dailyTasks = require('./routes/api/dailytask')
 
   const books = require('./routes/api/books')
+
+  const words = require('./routes/api/words')
   // start express app
   const app = express()
   // Body parser middleware
@@ -54,6 +57,8 @@ function prepareServer() {
   app.use('/api/dailytasks', dailyTasks)
 
   app.use('/api/books', books)
+
+  app.use('/api/words', words)
   // DB config
   mongoose
     .connect(
@@ -75,5 +80,6 @@ function init() {
   setInterval(() => {
     CollectActions()
   }, 1000 * 60 * 60 * 24)
+  countRecallWord()
 }
 init()

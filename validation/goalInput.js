@@ -1,16 +1,12 @@
 const Joi = require('joi')
 
-const goalInputValidation = data => {
+const wordInputValidation = data => {
   const schema = Joi.object().keys({
-    name: Joi.string().required(),
-    timeEnd: Joi.date()
-      .greater('now')
-      .required(),
-    description: Joi.string()
-      .allow('')
-      .optional(),
+    word: Joi.string().required(),
+    description: Joi.string().required(),
+    linkMap: Joi.string().required(),
   })
   return Joi.validate(data, schema)
 }
 
-module.exports = goalInputValidation
+module.exports = wordInputValidation
