@@ -14,7 +14,8 @@ const updateRecallTime = time => {
       return Date.now() + 1000 * 60 * 60 * 24 * 180
     case 6:
       return Date.now() + 1000 * 60 * 60 * 24 * 365
+    default:
+      return Date.now() + 1000
   }
 }
-
 module.exports = updateRecallTime

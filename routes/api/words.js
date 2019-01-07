@@ -1,4 +1,5 @@
 const router = require('express').Router()
+// const moment = require('moment')
 // Load User modal
 const Word = require('../../Models/Word')
 // Import middlewares
@@ -15,7 +16,7 @@ router.get('/', authCheck, async (req, res) => {
     // find all word
     const words = await Word.find({
       user: req.user._id,
-      status: req.query.isRecall,
+      isRecall: req.query.isRecall ? req.query.isRecall : '',
     })
     if (!words) {
       return res.json({
@@ -38,12 +39,44 @@ router.get('/', authCheck, async (req, res) => {
     })
   }
 })
+// Get router
+// Get word detail for specify id
+router.get('/:id', authCheck, async (req, res) => {
+  try {
+    // Find anyword match that id or not
+    const word = await Word.findOne({
+      user: req.user._id,
+      _id: req.params.id,
+    })
+    // Check if word exist or not
+    if (!word) {
+      return res.json({
+        result: 'fail',
+        status: 404,
+        error: 'Could not found any word match that id',
+      })
+    }
+    // Return word
+    return res.json({
+      result: 'success',
+      item: word,
+      status: 200,
+      message: 'Get item detail success',
+    })
+  } catch (error) {
+    return res.json({
+      result: 'fail',
+      status: 400,
+      error: 'Could not get word detail',
+    })
+  }
+})
 
 // post router
 // Create new word
 router.post('/', authCheck, async (req, res) => {
   try {
-    const { data } = req.body
+    const data = req.body
     const { error } = inputWordValidate(data)
     if (error) {
       return res.json({
@@ -56,7 +89,8 @@ router.post('/', authCheck, async (req, res) => {
       user: req.user._id,
       word: data.word,
       description: data.description,
-      mapLink: data.mapLink,
+      linkMap: data.linkMap,
+      filePath: data.filePath,
     })
     const isSaveWord = await newWord.save()
     if (!isSaveWord) {
@@ -73,6 +107,7 @@ router.post('/', authCheck, async (req, res) => {
       message: 'Create new word success',
     })
   } catch (error) {
+    console.log(error)
     return res.json({
       result: 'fail',
       status: 400,
@@ -86,7 +121,7 @@ router.post('/', authCheck, async (req, res) => {
 
 router.put('/:id', authCheck, async (req, res) => {
   try {
-    const { data } = req.body
+    const data = req.body
     const { error } = inputWordValidate(data)
     if (error) {
       return res.json({
@@ -110,7 +145,8 @@ router.put('/:id', authCheck, async (req, res) => {
     // Change infomation
     word.word = data.word
     word.description = data.description
-    word.mapLink = data.mapLink
+    word.linkMap = data.linkMap
+    word.filePath = data.filePath
     // Save new word
     const isSaveWord = await word.save()
     if (!isSaveWord) {
@@ -196,10 +232,10 @@ router.post('/check/:id', authCheck, async (req, res) => {
       })
     }
     // Check done process
-    //  + Change nextRecall depend on recallItem
-    word.recallTime = word.recallTime + nextRecallTime(word.recallTime)
+    // + Change nextRecall depend on recallItem
+    word.nextRecall = nextRecallTime(word.timeRecall)
     //  + Increase recall Time by 1
-    word.recallTime = word.recallTime + 1
+    word.timeRecall += 1
     // Save new word
     const isSaveWord = await word.save()
     // check save success or not
@@ -217,6 +253,7 @@ router.post('/check/:id', authCheck, async (req, res) => {
       item: isSaveWord,
     })
   } catch (error) {
+    console.log(error)
     return res.json({
       result: 'fail',
       status: 400,
