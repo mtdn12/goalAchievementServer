@@ -7,6 +7,7 @@ const cors = require('cors')
 // Import helper function
 const CollectActions = require('./helpers/CollectActions')
 const countRecallWord = require('./helpers/countRecallWord')
+const reCountTodo = require('./helpers/CountTodoList')
 
 function prepareServer() {
   // Route List
@@ -29,6 +30,12 @@ function prepareServer() {
   const books = require('./routes/api/books')
 
   const words = require('./routes/api/words')
+
+  const todos = require('./routes/api/todo')
+
+  const dailyTodos = require('./routes/api/dailyTodo')
+
+  const historyTodos = require('./routes/api/historyTodo')
   // start express app
   const app = express()
   // Body parser middleware
@@ -59,6 +66,13 @@ function prepareServer() {
   app.use('/api/books', books)
 
   app.use('/api/words', words)
+
+  app.use('/api/todos', todos)
+
+  app.use('/api/dailyTodos', dailyTodos)
+
+  app.use('/api/historyTodos', historyTodos)
+
   // DB config
   mongoose
     .connect(
@@ -81,5 +95,6 @@ function init() {
     CollectActions()
   }, 1000 * 60 * 60 * 24)
   countRecallWord()
+  reCountTodo()
 }
 init()
