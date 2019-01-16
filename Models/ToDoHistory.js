@@ -10,10 +10,20 @@ const TodoHistorySchema = new Schema({
     type: Number,
     required: true,
   },
-  Date: {
+  date: {
     type: Date,
     default: Date.now(),
   },
+  details: [
+    {
+      todo: {
+        type: String,
+      },
+      isComplete: {
+        type: Boolean,
+      },
+    },
+  ],
 })
 
 module.exports = mongoose.model('todoHistories', TodoHistorySchema)

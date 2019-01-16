@@ -3,6 +3,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const keys = require('./config')
 const cors = require('cors')
+// const cron = require('node-cron')
+const CronJob = require('cron').CronJob
 
 // Import helper function
 const CollectActions = require('./helpers/CollectActions')
@@ -71,7 +73,7 @@ function prepareServer() {
 
   app.use('/api/dailyTodos', dailyTodos)
 
-  app.use('/api/historyTodos', historyTodos)
+  app.use('/api/todoHistories', historyTodos)
 
   // DB config
   mongoose
@@ -90,11 +92,17 @@ function prepareServer() {
 }
 function init() {
   prepareServer()
-  // CollectActions()
-  setInterval(() => {
-    CollectActions()
-  }, 1000 * 60 * 60 * 24)
-  countRecallWord()
-  reCountTodo()
+  const job = new CronJob(
+    '00 00 23 * * *',
+    () => {
+      reCountTodo()
+      countRecallWord()
+      CollectActions()
+    },
+    null,
+    true,
+    'Asia/Ho_Chi_Minh'
+  )
+  job.start()
 }
 init()

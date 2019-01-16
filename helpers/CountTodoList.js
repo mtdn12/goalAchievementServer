@@ -20,10 +20,15 @@ const reCountTodo = async () => {
   userTodos.forEach(todos => {
     if (todos.length > 0) {
       let completed = todos.filter(todo => todo.isComplete)
-      let percent = (completed.length / todos.length).toFixed(2)
+      let percent = ((completed.length / todos.length) * 100).toFixed(2)
+      let details = todos.map(todo => ({
+        todo: todo.todo,
+        isComplete: todo.isComplete,
+      }))
       const history = new TodoHistory({
         percent,
         user: todos[0].user,
+        details,
       })
       history.save()
     }
