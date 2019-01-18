@@ -1,0 +1,4 @@
+#! /app/bin/node
+const reCountTodo = require('../helpers/CountTodoList')
+reCountTodo()
+process.exit()

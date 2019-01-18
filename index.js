@@ -4,12 +4,10 @@ const bodyParser = require('body-parser')
 const keys = require('./config')
 const cors = require('cors')
 // const cron = require('node-cron')
-const CronJob = require('cron').CronJob
 
 // Import helper function
 const CollectActions = require('./helpers/CollectActions')
 const countRecallWord = require('./helpers/countRecallWord')
-const reCountTodo = require('./helpers/CountTodoList')
 
 function prepareServer() {
   // Route List
@@ -92,17 +90,17 @@ function prepareServer() {
 }
 function init() {
   prepareServer()
-  const job = new CronJob(
-    '00 00 23 * * *',
-    () => {
-      reCountTodo()
-      countRecallWord()
-      CollectActions()
-    },
-    null,
-    true,
-    'Asia/Ho_Chi_Minh'
-  )
-  job.start()
+  //   const job = new CronJob(
+  //     '00 00 23 * * *',
+  //     () => {
+  //       reCountTodo()
+  //       countRecallWord()
+  //       CollectActions()
+  //     },
+  //     null,
+  //     true,
+  //     'Asia/Ho_Chi_Minh'
+  //   )
+  //   job.start()
 }
 init()
