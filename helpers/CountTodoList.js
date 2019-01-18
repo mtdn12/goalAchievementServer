@@ -8,9 +8,7 @@ const reCountTodo = async () => {
   try {
     console.log('cron job run')
     // Find all users
-    console.log('cron job run before query')
     const users = await User.find()
-    console.log('cron job run 1')
     // Loopthrough all user and find all todos match with that user
     const promises = []
     users.forEach(user => {
@@ -34,7 +32,6 @@ const reCountTodo = async () => {
           user: todos[0].user,
           details,
         })
-        console.log(history)
         history.save()
       }
     })
@@ -43,7 +40,6 @@ const reCountTodo = async () => {
     // Find all Daily task
     const dailyTasks = await DailyTodo.find()
     // loopThrough all daily task and then create new Todo
-    console.log('daily task', dailyTasks)
     dailyTasks.forEach(daily => {
       let todo = new Todo({
         todo: daily.todo,
