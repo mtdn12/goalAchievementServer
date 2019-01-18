@@ -104,3 +104,5 @@ function init() {
   //   job.start()
 }
 init()
+
+module.exports = prepareServer
