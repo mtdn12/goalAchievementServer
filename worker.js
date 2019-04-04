@@ -1,7 +1,7 @@
 const RecountTodo = require('./helpers/CountTodoList')
 const mongoose = require('mongoose')
 const keys = require('./config')
-// DB config
+// connected mongo database
 mongoose
   .connect(
     keys.mongoURI,
@@ -9,5 +9,5 @@ mongoose
   )
   .then(() => console.log('MongoDb Connected'))
   .catch(err => console.log(err))
-
+// ReCount List todo
 RecountTodo()

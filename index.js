@@ -36,6 +36,8 @@ function prepareServer() {
   const dailyTodos = require('./routes/api/dailyTodo')
 
   const historyTodos = require('./routes/api/historyTodo')
+
+  const diary = require('./routes/api/diary')
   // start express app
   const app = express()
   // Body parser middleware
@@ -72,6 +74,8 @@ function prepareServer() {
   app.use('/api/dailyTodos', dailyTodos)
 
   app.use('/api/todoHistories', historyTodos)
+
+  app.use('/api/diaries', diary)
 
   // DB config
   mongoose
